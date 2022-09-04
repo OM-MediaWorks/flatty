@@ -1,0 +1,18 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<https://danielbeeke.nl>
+    a                foaf:Person ;
+    foaf:name        "Daniel Beeke" ;
+    foaf:title       "Mr" ;
+    foaf:givenName   "Daniel" ;
+    foaf:family_name "Beeke" ;
+    foaf:mbox        <mailto:mail@danielbeeke.nl> ;
+    foaf:homepage    <https://danielbeeke.nl> ;
+    foaf:depiction   <https://danielbeeke.nl/images/daniel.jpg> ;
+
+    foaf:knows ( [
+        a foaf:Person ;
+        foaf:name "John Doo"
+    ] ) ;
+
+    foaf:phone       <tel:0031637346364> .
