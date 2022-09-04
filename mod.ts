@@ -1,7 +1,8 @@
 import { Options, selectQuery, describeQuery, TermValue, DefaultBindings, QueryContext, Engine } from './types.ts'
-import { Store } from 'https://cdn.skypack.dev/n3'
+import { Quad, Store } from 'n3'
 import { execute } from './middlewares/execute.ts'
 import { events } from './middlewares/events.ts'
+import { websockets } from './helpers/websockets.ts'
 
 /** @ts-ignore */
 import Comunica from './vendor/comunica-browser.js'
@@ -15,6 +16,7 @@ export class FlatFileTripleStore extends EventTarget{
   #options: Options
   #engine: Engine
   #store: Store
+  #websockets
 
   constructor (options: Options) {
     super()
@@ -25,6 +27,9 @@ export class FlatFileTripleStore extends EventTarget{
     this.#middlewares = [events]
     if (options.middlewares) this.#middlewares.push(...options.middlewares)
     this.#middlewares.push(execute)
+    if (!this.#options.baseURI) this.#options.baseURI = 'http://example.com'
+
+    this.#websockets = websockets(this)
 
     /* @ts-ignore */
     return this.initiate().then(() => {
@@ -33,21 +38,25 @@ export class FlatFileTripleStore extends EventTarget{
   }
 
   async initiate () {
-    await watchData(this.#store, this.#options.baseURI, this.#options.rootFolder)
+    await watchData(this.#store, this.#options.baseURI!, this.#options.folder, this)
   }
   
-  async query (query: describeQuery): Promise<string>;
+  close () {
+    this.#websockets.close()
+  }
+
+  async query (query: describeQuery): Promise<Array<Quad>>;
   async query <Bindings extends string = DefaultBindings>(query: selectQuery): Promise<Array<{ [key in Bindings]: TermValue }>>;
   async query (query: describeQuery | selectQuery) {
     query = query.startsWith('DESCRIBE') ? query as describeQuery : query as selectQuery
-    const context = await { query, store: this.#store, engine: this.#engine }
+    const context: QueryContext = await { query, store: this.#store, engine: this.#engine, eventTarget: this }
 
-    let pointer: any 
-    for (const middleware of [...this.#middlewares, pointer].reverse()) {
-      const previousPointer = pointer
-      pointer = () => middleware(context, previousPointer ? previousPointer : () => null)
+    let chain: any 
+    for (const middleware of [...this.#middlewares].reverse()) {
+      const previousPointer = chain
+      chain = () => middleware(context, previousPointer ? previousPointer : () => null)
     }
 
-    return pointer()
+    return chain()
   }
 }

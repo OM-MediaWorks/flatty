@@ -1,8 +1,8 @@
-import { Store } from 'https://cdn.skypack.dev/n3'
+import { Store } from 'n3'
 
 export type Options = {
-  baseURI: string
-  rootFolder: string
+  baseURI?: string
+  folder: string
   middlewares?: Array<(context: QueryContext, next: any) => Promise<void>>
 }
 
@@ -21,7 +21,8 @@ export type QueryContext = {
   query: string,
   store: Store
   engine: Engine
-  results?: any
+  results?: any,
+  eventTarget: EventTarget
 }
 
 export type Engine = {

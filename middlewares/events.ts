@@ -1,8 +1,18 @@
 import { QueryContext } from '../types.ts'
+import { Parser } from 'sparqljs'
 
-export const events = async (context: QueryContext, next: Function) => {
-  const done = await next()
-  console.log('events')
+export const events = (context: QueryContext, next: Function) => {
+  const sparqlParser = new Parser()
+  const parsedQuery = sparqlParser.parse(context.query)
 
-  return done
+  const hooks = [
+    /** @ts-ignore */
+    `query:${parsedQuery.queryType}`
+  ]
+
+  for (const hook of hooks) {
+    context.eventTarget.dispatchEvent(new CustomEvent(hook, { detail: context }))
+  }
+
+  return next()
 }

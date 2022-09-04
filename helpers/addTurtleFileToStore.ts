@@ -1,4 +1,4 @@
-import { Quad, Store, Parser as TurtleParser, DataFactory } from 'https://cdn.skypack.dev/n3'
+import { Quad, Store, Parser as TurtleParser, DataFactory } from 'n3'
 const { namedNode } = DataFactory
 const turtleParser = new TurtleParser()
 

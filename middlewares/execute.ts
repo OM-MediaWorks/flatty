@@ -1,15 +1,15 @@
 import { streamToString } from '../helpers/streamToString.ts'
 import { QueryContext } from '../types.ts'
 
-export const execute = async (context: QueryContext, next: Function) => {
+export const execute = async (context: QueryContext) => {
   const response = await context.engine.query(context.query, {
     sources: [context.store],
     unionDefaultGraph: true
   })
 
   if (response.resultType === 'quads') {
-    const { data } = await context.engine.resultToString(response, 'application/n-quads')
-    context.results = await streamToString(data)
+    const quadStream = await response.execute()
+    context.results = await quadStream.toArray()
   }
   else if (response.resultType === 'bindings') {
     const { data } = await context.engine.resultToString(response, 'application/sparql-results+json')
@@ -17,6 +17,5 @@ export const execute = async (context: QueryContext, next: Function) => {
     context.results = json.results.bindings
   }
 
-  console.log('execute')
   return context.results
 }
