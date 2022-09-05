@@ -1,31 +1,41 @@
 import { serve } from 'std/http/server.ts'
+import { debounce } from 'std/async/debounce.ts'
 
 const abortController = new AbortController()
 
-export const websockets = (eventTarget: EventTarget) => {
+export const websockets = (eventTarget: EventTarget, port: number) => {
   
   const clients: Set<WebSocket> = new Set()
   
+  let servePromise: any
+
+  const debouncer = debounce(() => {
+    module.reloadClients()
+  }, 300)
+
   const module = {
     reloadClients: () => {
       for (const client of clients) {
-        if (client.readyState === 1) {
+        if (client.readyState === client.OPEN) {
           client.send('RELOAD')
         }
       }
     },
-    close: () => abortController.abort('Closing')
+    close: () => {
+      for (const client of clients) if (client.readyState === client.OPEN) client.close()
+      abortController.abort('Closing')
+      debouncer.clear()
+      return servePromise
+    }
   }
 
-  eventTarget.addEventListener('file', () => {
-    module.reloadClients()
-  })
+  eventTarget.addEventListener('file', debouncer)
 
-  serve(function (req: Request) {
+  servePromise = serve(function (req: Request) {
     if (req.headers.get('upgrade') !== 'websocket') {
       return new Response(null, { status: 501 })
     }
-  
+
     const { socket: ws, response } = Deno.upgradeWebSocket(req)
   
     ws.onopen = () => {
@@ -37,7 +47,7 @@ export const websockets = (eventTarget: EventTarget) => {
   
     return response
   }, { 
-    port: 8007,
+    port,
     signal: abortController.signal,
     onListen: () => null
   })

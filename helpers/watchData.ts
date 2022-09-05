@@ -34,4 +34,6 @@ export const watchData = async (store: Store, base: string, rootFolder: string, 
       }
     }    
   })()
+
+  return watcher
 }

@@ -3,6 +3,7 @@ import { Store } from 'n3'
 export type Options = {
   baseURI?: string
   folder: string
+  websocketsPort?: number,
   middlewares?: Array<(context: QueryContext, next: any) => Promise<void>>
 }
 

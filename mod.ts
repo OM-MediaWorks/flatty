@@ -17,6 +17,8 @@ export class FlatFileTripleStore extends EventTarget{
   #engine: Engine
   #store: Store
   #websockets
+  /** @ts-ignore */
+  #watcher: Deno.FsWatcher
 
   constructor (options: Options) {
     super()
@@ -29,20 +31,19 @@ export class FlatFileTripleStore extends EventTarget{
     this.#middlewares.push(execute)
     if (!this.#options.baseURI) this.#options.baseURI = 'http://example.com'
 
-    this.#websockets = websockets(this)
+    this.#websockets = websockets(this, this.#options.websocketsPort ?? 8007)
 
     /* @ts-ignore */
-    return this.initiate().then(() => {
+    return watchData(this.#store, this.#options.baseURI!, this.#options.folder, this)
+    .then((watcher) => {
+      this.#watcher = watcher
       return this
     })
   }
-
-  async initiate () {
-    await watchData(this.#store, this.#options.baseURI!, this.#options.folder, this)
-  }
-  
+ 
   close () {
-    this.#websockets.close()
+    this.#watcher.close()
+    return this.#websockets.close()
   }
 
   async query (query: describeQuery): Promise<Array<Quad>>;
