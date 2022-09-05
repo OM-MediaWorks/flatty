@@ -23,10 +23,20 @@ export type QueryContext = {
   store: Store
   engine: Engine
   results?: any,
-  eventTarget: EventTarget
+  eventTarget: EventTarget,
+  serialize: boolean
 }
 
 export type Engine = {
   query: (query: string, options: { [key: string]: any }) => Promise<any>,
   resultToString: (data: any, type: string) => any
+}
+
+export type BindingsResponse<Bindings extends string> = {
+  head: {
+    vars: Array<string>
+  },
+  results: {
+    bindings: Array<{ [key in Bindings]: TermValue }>
+  }
 }

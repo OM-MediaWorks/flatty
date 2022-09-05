@@ -17,7 +17,12 @@ describe('Middleware execute', () => {
 
   it('Select query results in bindings', async () => {
     const bindings = await store.query<'s' | 'p' | 'o'>('SELECT * { ?s ?p ?o }')
-    assertEquals(bindings.length, 14)
+    assertEquals(bindings.results.bindings.length, 14)
+  })
+
+  it('Select query results in bindings serialized', async () => {
+    const bindings = await store.query<'s' | 'p' | 'o'>('SELECT * { ?s ?p ?o }', true)
+    assertEquals(typeof bindings, 'string')
   })
 
   it('Describe query results in quads', async () => {
@@ -25,5 +30,9 @@ describe('Middleware execute', () => {
     assertEquals(quads.length, 10)
   })
 
+  it('Describe query results in quads serialized', async () => {
+    const quads = await store.query('DESCRIBE <https://danielbeeke.nl>', true)
+    assertEquals(typeof quads, 'string')
+  })
 })
 

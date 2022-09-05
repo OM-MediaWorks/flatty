@@ -1,4 +1,4 @@
-import { Options, selectQuery, describeQuery, TermValue, DefaultBindings, QueryContext, Engine } from './types.ts'
+import { Options, selectQuery, describeQuery, BindingsResponse, DefaultBindings, QueryContext, Engine } from './types.ts'
 import { Quad, Store } from 'n3'
 import { execute } from './middlewares/execute.ts'
 import { events } from './middlewares/events.ts'
@@ -47,11 +47,15 @@ export class FlatFileTripleStore extends EventTarget{
     return this.#websockets.close()
   }
 
-  async query (query: describeQuery): Promise<Array<Quad>>;
-  async query <Bindings extends string = DefaultBindings>(query: selectQuery): Promise<Array<{ [key in Bindings]: TermValue }>>;
-  async query (query: describeQuery | selectQuery) {
+  async query (query: describeQuery, serialize: boolean): Promise<string>;
+  async query (query: selectQuery, serialize: boolean): Promise<string>;
+
+  async query (query: describeQuery, serialize?: boolean): Promise<Array<Quad>>;
+  async query <Bindings extends string = DefaultBindings>(query: selectQuery, serialize?: boolean): Promise<BindingsResponse<Bindings>>;
+
+  async query (query: describeQuery | selectQuery, serialize: boolean = false) {
     query = query.startsWith('DESCRIBE') ? query as describeQuery : query as selectQuery
-    const context: QueryContext = await { query, store: this.#store, engine: this.#engine, eventTarget: this }
+    const context: QueryContext = await { query, store: this.#store, engine: this.#engine, eventTarget: this, serialize }
 
     let chain: any 
     for (const middleware of [...this.#middlewares].reverse()) {
