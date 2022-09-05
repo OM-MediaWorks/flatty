@@ -3,6 +3,7 @@ import { Quad, Store } from 'n3'
 import { execute } from './middlewares/execute.ts'
 import { events } from './middlewares/events.ts'
 import { websockets } from './websockets.ts'
+import { SerializedN3Store } from './SerializedN3Store.ts'
 
 /** @ts-ignore */
 import Comunica from './vendor/comunica-browser.js'
@@ -25,7 +26,7 @@ export class FlatFileTripleStore extends EventTarget{
 
     this.#options = options
     this.#engine = new QueryEngine()
-    this.#store = new Store()
+    this.#store = new SerializedN3Store()
     this.#middlewares = [events]
     if (options.middlewares) this.#middlewares.push(...options.middlewares)
     this.#middlewares.push(execute)

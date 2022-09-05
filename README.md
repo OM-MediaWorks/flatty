@@ -12,3 +12,4 @@ It provides the folloing features:
 Future:
 
 - Fast boot with a serialized N3 store instead of indexing when starting
+  - Implemented but needs tests if it is really a faster boot
