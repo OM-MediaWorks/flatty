@@ -1,15 +1,16 @@
-# Flat File Triple Store
+# Flatty, a flat file triple store
 
-Flat File Triple Store is a wrapper around the N3 store. 
+Flatty is a wrapper around the N3 store. 
 
-It provides the folloing features:
+It provides the following features:
 
 - File sync: edit turtle on disk and see that reflected in the in-memory store
 - Middleware functionality: You can change the query and / or the outcome
 - Provides __query()__ method from Comunica with some TypeScript typings
 - WebSockets PubSub: Subscribe to query events
+- Boot with a serialized N3 store instead of indexing when starting
 
-Future:
+TODO:
 
-- Fast boot with a serialized N3 store instead of indexing when starting
-  - Implemented but needs tests if it is really a faster boot
+- Test performance of SerializedN3Store
+- Sync back Sparql updates to disk
