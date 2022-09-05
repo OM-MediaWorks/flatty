@@ -1,23 +1,16 @@
 import { serve } from 'std/http/server.ts'
 import { debounce } from 'std/async/debounce.ts'
-
 const abortController = new AbortController()
 
 export const websockets = (eventTarget: EventTarget, port: number) => {
   
   const clients: Set<WebSocket> = new Set()
-  
-  let servePromise: any
-
-  const debouncer = debounce(() => {
-    module.reloadClients()
-  }, 300)
 
   const module = {
-    reloadClients: () => {
+    reloadClients: (meta: any) => {
       for (const client of clients) {
         if (client.readyState === client.OPEN) {
-          client.send('RELOAD')
+          client.send(JSON.stringify(meta))
         }
       }
     },
@@ -29,9 +22,13 @@ export const websockets = (eventTarget: EventTarget, port: number) => {
     }
   }
 
+  const debouncer = debounce((event) => {
+    module.reloadClients(event.detail)
+  }, 300)
+
   eventTarget.addEventListener('file', debouncer)
 
-  servePromise = serve(function (req: Request) {
+  const servePromise = serve(function (req: Request) {
     if (req.headers.get('upgrade') !== 'websocket') {
       return new Response(null, { status: 501 })
     }

@@ -1,12 +1,19 @@
 import { ensureDir, expandGlob } from 'std/fs/mod.ts'
 import { addTurtleFileToStore, deleteGraphFromStore, getGraphUriByPath } from './addTurtleFileToStore.ts'
 import { Store } from 'n3'
+import { dirname, fromFileUrl, normalize } from 'std/path/mod.ts'
 
 export const watchData = async (store: Store, base: string, rootFolder: string, eventTarget: EventTarget) => {
 
   const dispatchEvent = (path: string, type: string) => {
-    eventTarget.dispatchEvent(new CustomEvent('file', { detail: { path, type } }))
-    eventTarget.dispatchEvent(new CustomEvent(`file.${type}`, { detail: { path } }))
+    const normalizedPath = normalize(path)
+    const projectRoot = dirname(fromFileUrl(Deno.mainModule))
+    const relativePath = normalizedPath
+    .replace(projectRoot, '')
+    .replace(rootFolder.replace('./', '/'), '')
+
+    eventTarget.dispatchEvent(new CustomEvent('file', { detail: { path: relativePath, type } }))
+    eventTarget.dispatchEvent(new CustomEvent(`file.${type}`, { detail: { path: relativePath } }))
   }
 
   await ensureDir(rootFolder)

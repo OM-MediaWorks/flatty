@@ -2,7 +2,7 @@ import { Options, selectQuery, describeQuery, TermValue, DefaultBindings, QueryC
 import { Quad, Store } from 'n3'
 import { execute } from './middlewares/execute.ts'
 import { events } from './middlewares/events.ts'
-import { websockets } from './helpers/websockets.ts'
+import { websockets } from './websockets.ts'
 
 /** @ts-ignore */
 import Comunica from './vendor/comunica-browser.js'

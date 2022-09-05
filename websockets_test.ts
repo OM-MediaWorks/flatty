@@ -1,7 +1,7 @@
 import { assertEquals, assertExists } from 'std/testing/asserts.ts'
-import { FlatFileTripleStore } from '../mod.ts'
+import { FlatFileTripleStore } from './mod.ts'
 import { it, describe } from 'std/testing/bdd.ts'
-import { awaitEvent } from '../helpers/awaitEvent.ts'
+import { awaitEvent } from './helpers/awaitEvent.ts'
 
 describe('Websockets', () => {
   it('Connect websocket and gets notified of file change', async () => {
@@ -19,7 +19,7 @@ describe('Websockets', () => {
 
     const message = await awaitEvent(socket, 'message') as unknown as MessageEvent
     assertExists(message)
-    assertEquals(message.data, 'RELOAD')
+    assertEquals(message.data, '{"path":"/daniel-beeke.ttl","type":"modify"}')
 
     socket.close()
     await awaitEvent(socket, 'close')
