@@ -1,4 +1,6 @@
-import { Quad, Store, Parser as TurtleParser, DataFactory } from 'n3'
+import { Store, Parser as TurtleParser, DataFactory } from 'n3'
+import { allPrefixes } from './allPrefixes.ts'
+
 const { namedNode } = DataFactory
 const turtleParser = new TurtleParser()
 
@@ -17,16 +19,18 @@ export const addTurtleFileToStore = async (store: Store, base: string, path: str
   const fileContents = await Deno.readTextFile(path)
 
   try {
-    const quads: Array<Quad> | undefined = turtleParser.parse(fileContents)
+    const graphUri = getGraphUriByPath(path, base)
+    console.log(graphUri)
+    deleteGraphFromStore(store, graphUri)
 
-    if (quads && quads.length) {
-      const graphUri = getGraphUriByPath(path, base)  
-      deleteGraphFromStore(store, graphUri)
-      
-      for (const quad of quads) {
-        store.addQuad(quad.subject, quad.predicate, quad.object, namedNode(graphUri))
-      }  
-    }  
+    console.log(fileContents)
+
+    turtleParser.parse(fileContents, (error, quad, prefixes) => {
+      if (quad) store.addQuad(quad.subject, quad.predicate, quad.object, namedNode(graphUri))
+      if (prefixes) {
+        Object.assign(allPrefixes, prefixes)
+      }
+    })
   }
   catch (exception) {
     console.error(exception)

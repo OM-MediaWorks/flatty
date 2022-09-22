@@ -1,13 +1,14 @@
 import { assertEquals } from 'std/testing/asserts.ts'
-import { FlatFileTripleStore } from '../mod.ts'
+import { Flatty } from '../mod.ts'
 import { beforeAll, afterAll, it, describe } from 'std/testing/bdd.ts'
 
 describe('Middleware execute', () => {
-  let store: FlatFileTripleStore
+  let store: Flatty
 
   beforeAll(async () => {
-    store = await new FlatFileTripleStore({
+    store = await new Flatty({
       folder: './test-data',
+      websocketsPort: false
     })
   })
 
@@ -34,5 +35,6 @@ describe('Middleware execute', () => {
     const quads = await store.query('DESCRIBE <https://danielbeeke.nl>', true)
     assertEquals(typeof quads, 'string')
   })
+
 })
 

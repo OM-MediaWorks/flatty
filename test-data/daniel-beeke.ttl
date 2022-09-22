@@ -17,3 +17,7 @@
 
     foaf:phone       <tel:0031637346364> .
 
+
+<https://danielbeeke.nl/john-doo>
+    a                foaf:Person ;
+    foaf:name        "John Doo" .

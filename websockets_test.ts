@@ -1,11 +1,11 @@
 import { assertEquals, assertExists } from 'std/testing/asserts.ts'
-import { FlatFileTripleStore } from './mod.ts'
+import { Flatty } from './mod.ts'
 import { it, describe } from 'std/testing/bdd.ts'
 import { awaitEvent } from './helpers/awaitEvent.ts'
 
 describe('Websockets', () => {
   it('Connect websocket and gets notified of file change', async () => {
-    const store = await new FlatFileTripleStore({
+    const store = await new Flatty({
       folder: './test-data',
     })
     const socket = new WebSocket('ws://localhost:8007')

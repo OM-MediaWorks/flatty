@@ -1,6 +1,6 @@
 # Flatty, a flat file triple store
 
-Flatty is a wrapper around the N3 store. 
+Flatty is a wrapper around a triple store. 
 
 It provides the following features:
 
@@ -14,3 +14,5 @@ TODO:
 
 - Test performance of SerializedN3Store
 - Sync back Sparql updates to disk
+- Make possible to use Apache Jena
+- Make events trigger after submitting to Comunica

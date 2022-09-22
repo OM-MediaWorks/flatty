@@ -7,6 +7,8 @@ export const execute = async (context: QueryContext) => {
     unionDefaultGraph: true
   })
 
+  context.store.inTransaction = false
+  
   if (response.resultType === 'quads') {
     const quadStream = await response.execute()
 
@@ -22,6 +24,13 @@ export const execute = async (context: QueryContext) => {
     const { data } = await context.engine.resultToString(response, 'application/sparql-results+json')
     const text = await streamToString(data)
     context.results = context.serialize ? text : JSON.parse(text)
+  }
+  else if (response.resultType === 'void') {
+    await response.execute()
+
+    context.results = {
+      done: true
+    }
   }
 
   return context.results

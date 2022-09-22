@@ -15,16 +15,16 @@ export const websockets = (eventTarget: EventTarget, port: number) => {
       }
     },
     close: () => {
+      debouncer.clear()
       for (const client of clients) if (client.readyState === client.OPEN) client.close()
       abortController.abort('Closing')
-      debouncer.clear()
       return servePromise
     }
   }
 
   const debouncer = debounce((event) => {
     module.reloadClients(event.detail)
-  }, 300)
+  }, 100)
 
   eventTarget.addEventListener('file', debouncer)
 

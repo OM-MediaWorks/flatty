@@ -1,14 +1,15 @@
 import { assertEquals } from 'std/testing/asserts.ts'
-import { FlatFileTripleStore } from '../mod.ts'
+import { Flatty } from '../mod.ts'
 import { beforeAll, afterAll, it, describe } from 'std/testing/bdd.ts'
 import { awaitEvent } from '../helpers/awaitEvent.ts'
 
 describe('Middleware events', () => {
-  let store: FlatFileTripleStore
+  let store: Flatty
 
   beforeAll(async () => {
-    store = await new FlatFileTripleStore({
+    store = await new Flatty({
       folder: './test-data',
+      websocketsPort: false
     })
   })
 
