@@ -1,7 +1,0 @@
-{
-  "imports": {
-    "n3": "https://esm.sh/n3@1.16.2",
-    "std/": "https://deno.land/std@0.152.0/",
-    "sparqljs": "https://esm.sh/sparqljs@3.5.2"
-  }
-}

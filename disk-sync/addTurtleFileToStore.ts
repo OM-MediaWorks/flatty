@@ -1,5 +1,5 @@
-import { Store, Parser as TurtleParser, DataFactory } from 'n3'
-import { allPrefixes } from './allPrefixes.ts'
+import { Store, Parser as TurtleParser, DataFactory } from '../deps.ts'
+import { allPrefixes } from '../helpers/allPrefixes.ts'
 
 const { namedNode } = DataFactory
 const turtleParser = new TurtleParser()
@@ -20,10 +20,19 @@ export const addTurtleFileToStore = async (store: Store, base: string, path: str
 
   try {
     const graphUri = getGraphUriByPath(path, base)
-    console.log(graphUri)
     deleteGraphFromStore(store, graphUri)
 
-    console.log(fileContents)
+    const tempStore = new Store(await turtleParser.parse(fileContents))
+    const subjectsThatAreOnlySubject = []
+    for (const subject of tempStore.getSubjects(null, null, null)) {
+      const placesWhereSubjectIsObject = tempStore.getQuads(null, null, subject, null)
+      if (!placesWhereSubjectIsObject.length)
+        subjectsThatAreOnlySubject.push(subject)
+    }
+
+    for (const subject of subjectsThatAreOnlySubject) {
+      
+    }
 
     turtleParser.parse(fileContents, (error, quad, prefixes) => {
       if (quad) store.addQuad(quad.subject, quad.predicate, quad.object, namedNode(graphUri))

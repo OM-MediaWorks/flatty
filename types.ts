@@ -1,8 +1,9 @@
-import { Store } from 'n3'
+import { Store } from './deps.ts'
 
 export type Options = {
+  store?: Store,
   baseURI?: string
-  folder: string
+  folder: string | false
   websocketsPort?: number | false,
   middlewares?: Array<(context: QueryContext, next: any) => Promise<void>>
 }
@@ -21,7 +22,7 @@ export type DefaultBindings = 's' | 'p' | 'o'
 
 export type QueryContext = {
   query: string,
-  store: EnhancedStore
+  store: Store,
   engine: Engine
   results?: any,
   eventTarget: EventTarget,
@@ -42,5 +43,3 @@ export type BindingsResponse<Bindings extends string> = {
     bindings: Array<{ [key in Bindings]: TermValue }>
   }
 }
-
-export type EnhancedStore = Store & { inTransaction: boolean }

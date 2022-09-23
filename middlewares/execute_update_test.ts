@@ -1,13 +1,21 @@
-import { assertEquals } from 'std/testing/asserts.ts'
+import { assertEquals } from '../deps.ts'
 import { Flatty } from '../mod.ts'
-import { it, describe } from 'std/testing/bdd.ts'
-import { awaitResources } from '../helpers/awaitResources.ts'
+import { it, describe } from '../deps.ts'
 
 describe('Middleware execute', () => {
   it('Inserts data', async () => {
     const store = await new Flatty({
-      folder: './test-data',
+      folder: false,
+      websocketsPort: false
     })
+
+    const countResponse = await store.query<'count'>(`
+      SELECT (count(?s) as ?count) {
+        ?s ?p ?O
+      }
+    `)
+
+    const count = parseInt(countResponse.results.bindings[0].count.value)
 
     await store.query(`
       PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -20,12 +28,9 @@ describe('Middleware execute', () => {
           } 
     }`)
 
-    const quads = await store.query('SELECT * { ?s ?p ?o }')
-    assertEquals(quads.results.bindings.length, 17)
-    Deno.removeSync('./test-data/example/shelf_A.ttl')
-    Deno.removeSync('./test-data/example')
+    const response = await store.query('SELECT * { ?s ?p ?o }')
+    assertEquals(response.results.bindings.length > count, true)
     await store.close()
-    await awaitResources()
   })
 
 })

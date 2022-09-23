@@ -1,5 +1,5 @@
-import { serve } from 'std/http/server.ts'
-import { debounce } from 'std/async/debounce.ts'
+import { serve } from '../deps.ts'
+import { debounce } from '../deps.ts'
 const abortController = new AbortController()
 
 export const websockets = (eventTarget: EventTarget, port: number) => {

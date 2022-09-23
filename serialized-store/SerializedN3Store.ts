@@ -1,12 +1,12 @@
-import { Store, StoreOptions, BaseQuad, Quad } from 'n3'
-import * as RDF from "https://esm.sh/v93/@types/rdf-js@4.0.2/rdf-js.d.ts";
+import { Store, StoreOptions, Quad } from '../deps.ts'
+import { RDF } from '../deps.ts';
 
 export type SerializedN3StoreOptions = StoreOptions & {
   snapshot: string
 }
 
 export class SerializedN3Store
-<Q_RDF extends RDF.BaseQuad = RDF.Quad, Q_N3 extends BaseQuad = Quad, OutQuad extends RDF.BaseQuad = RDF.Quad, InQuad extends RDF.BaseQuad = RDF.Quad>
+<Q_RDF extends RDF.BaseQuad = RDF.Quad, Q_N3 extends RDF.BaseQuad = Quad, OutQuad extends RDF.BaseQuad = RDF.Quad, InQuad extends RDF.BaseQuad = RDF.Quad>
 extends Store implements RDF.Store<Q_RDF>, RDF.DatasetCore<OutQuad, InQuad> {
   constructor (triples?: Q_RDF[], options?: SerializedN3StoreOptions) {
     super(triples, options)

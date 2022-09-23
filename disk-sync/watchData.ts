@@ -1,16 +1,16 @@
-import { ensureDir, expandGlob } from 'std/fs/mod.ts'
+import { ensureDir, expandGlob } from '../deps.ts'
 import { addTurtleFileToStore, deleteGraphFromStore, getGraphUriByPath } from './addTurtleFileToStore.ts'
-import { Store } from 'n3'
-import { dirname, fromFileUrl, normalize } from 'std/path/mod.ts'
-import { mutationSkipList } from './mutationSkipList.ts'
+import { Store } from '../deps.ts'
+import { normalize } from '../deps.ts'
+import { mutationSkipList } from '../helpers/mutationSkipList.ts'
 
 export const watchData = async (store: Store, base: string, rootFolder: string, eventTarget: EventTarget) => {
 
   const toRelativePath = (path: string) => {
     const normalizedPath = normalize(path)
-    const projectRoot = dirname(fromFileUrl(Deno.mainModule))
+
     return normalizedPath
-    .replace(projectRoot, '')
+    .replace(Deno.cwd(), '')
     .replace(rootFolder.replace('./', '/'), '')
   }
 

@@ -1,7 +1,7 @@
-import { assertEquals } from 'std/testing/asserts.ts'
-import { it, describe } from 'std/testing/bdd.ts'
+import { assertEquals } from '../deps.ts'
+import { it, describe } from '../deps.ts'
 import { SerializedN3Store } from './SerializedN3Store.ts'
-import { addTurtleFileToStore } from './helpers/addTurtleFileToStore.ts'
+import { addTurtleFileToStore } from '../disk-sync/addTurtleFileToStore.ts'
 
 describe('Serialized N3 Store', () => {
   it('starts with old state', async () => {

@@ -6,8 +6,6 @@ export const execute = async (context: QueryContext) => {
     sources: [context.store],
     unionDefaultGraph: true
   })
-
-  context.store.inTransaction = false
   
   if (response.resultType === 'quads') {
     const quadStream = await response.execute()
@@ -17,7 +15,7 @@ export const execute = async (context: QueryContext) => {
       context.results = await streamToString(data)
     }
     else {
-      context.results = quadStream.toArray()
+      context.results = await quadStream.toArray()
     }
   }
   else if (response.resultType === 'bindings') {

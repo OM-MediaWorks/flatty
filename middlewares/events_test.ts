@@ -1,6 +1,6 @@
-import { assertEquals } from 'std/testing/asserts.ts'
+import { assertEquals } from '../deps.ts'
 import { Flatty } from '../mod.ts'
-import { beforeAll, afterAll, it, describe } from 'std/testing/bdd.ts'
+import { beforeAll, afterAll, it, describe } from '../deps.ts'
 import { awaitEvent } from '../helpers/awaitEvent.ts'
 
 describe('Middleware events', () => {

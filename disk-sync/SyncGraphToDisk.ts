@@ -1,8 +1,8 @@
-import { Writer, Store, NamedNode, Quad } from 'n3'
-import { allPrefixes } from './allPrefixes.ts'
-import { mutationSkipList } from './mutationSkipList.ts'
-import { normalize, dirname } from 'std/path/mod.ts'
-import { ensureDirSync } from 'std/fs/mod.ts'
+import { Writer, Store, NamedNode, Quad } from '../deps.ts'
+import { allPrefixes } from '../helpers/allPrefixes.ts'
+import { mutationSkipList } from '../helpers/mutationSkipList.ts'
+import { normalize, dirname } from '../deps.ts'
+import { ensureDirSync } from '../deps.ts'
 
 export const SyncGraphToDisk = (store: Store, uri: string, base: string, folder: string) => {
   const relativePath = uri
@@ -28,7 +28,7 @@ export const SyncGraphToDisk = (store: Store, uri: string, base: string, folder:
         const outputPath = normalize(`${folder}/${relativePath}`) + '.ttl'
         const dir = dirname('./' + outputPath)
         ensureDirSync(dir)
-        Deno.writeTextFileSync('./' + outputPath, result)
+        // Deno.writeTextFileSync('./' + outputPath, result)
         mutationSkipList.delete(relativePath)
       }
     })
