@@ -2,10 +2,15 @@ import { Store } from './deps.ts'
 
 export type Options = {
   store?: Store,
-  baseURI?: string
-  folder: string | false
-  websocketsPort?: number | false,
-  middlewares?: Array<(context: QueryContext, next: any) => Promise<void>>
+  middlewares?: {
+    [key: string]: (context: QueryContext, next: any) => Promise<void>
+  }
+}
+
+export interface Middleware {
+  init? (): Promise<void> 
+  stop? (): Promise<void> 
+  execute (context: QueryContext, next: Function): any
 }
 
 export type selectQuery = `${string}SELECT${string}`;
@@ -28,8 +33,6 @@ export type QueryContext = {
   eventTarget: EventTarget,
   serialize: boolean
   parsedQuery: any
-  base: string,
-  folder?: string
 }
 
 export type Engine = {

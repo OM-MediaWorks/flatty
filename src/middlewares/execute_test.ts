@@ -13,8 +13,6 @@ describe('Middleware execute', () => {
     ])
 
     store = await new Flatty({
-      folder: false,
-      websocketsPort: false,
       store: n3Store
     })
   })
