@@ -1,4 +1,5 @@
 import { Store } from './deps.ts'
+import { Flatty } from './Flatty.ts'
 
 export type Options = {
   store?: Store,
@@ -8,7 +9,7 @@ export type Options = {
 }
 
 export interface Middleware {
-  init? (): Promise<void> 
+  init? (flatty: Flatty): Promise<void> 
   stop? (): Promise<void> 
   execute (context: QueryContext, next: Function): any
 }
@@ -33,6 +34,7 @@ export type QueryContext = {
   eventTarget: EventTarget,
   serialize: boolean
   parsedQuery: any
+  simplify: boolean
 }
 
 export type Engine = {
@@ -40,11 +42,13 @@ export type Engine = {
   resultToString: (data: any, type: string) => any
 }
 
-export type BindingsResponse<Bindings extends string> = {
+export type Binding<GivenBindings extends string> = { [key in GivenBindings]: TermValue }
+
+export type BindingsResponse<GivenBindings extends string> = {
   head: {
     vars: Array<string>
   },
   results: {
-    bindings: Array<{ [key in Bindings]: TermValue }>
+    bindings: Array<Binding<GivenBindings>>
   }
 }

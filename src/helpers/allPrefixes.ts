@@ -1,1 +1,1 @@
-export const allPrefixes = {}
+export const allPrefixes: { [key: string]: string } = {}

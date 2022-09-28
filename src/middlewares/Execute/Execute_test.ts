@@ -1,7 +1,7 @@
-import { assertEquals } from '../deps.ts'
-import { Store, NamedNode, Literal, Quad } from '../deps.ts'
-import { Flatty } from '../Flatty.ts'
-import { beforeAll, afterAll, it, describe } from '../deps.ts'
+import { assertEquals } from '../../deps.ts'
+import { Store, NamedNode, Literal, Quad } from '../../deps.ts'
+import { Flatty } from '../../Flatty.ts'
+import { beforeAll, afterAll, it, describe } from '../../deps.ts'
 
 describe('Middleware execute', () => {
   let store: Flatty
@@ -18,13 +18,19 @@ describe('Middleware execute', () => {
   })
 
   afterAll(async () => {
-    await store.close()
+    await store.stop()
   })
 
   it('Select query results in bindings', async () => {
-    const bindings = await store.query<'s' | 'p' | 'o'>('SELECT * { ?s ?p ?o }')
+    const bindings = await store.query<'s' | 'p' | 'o'>('SELECT * { ?s ?p ?o }', false, false)
     assertEquals(bindings.results.bindings.length > 0, true)
   })
+
+  it('Select query results in bindings and returns simple results', async () => {
+    const bindings = await store.query<'s' | 'p' | 'o'>('SELECT * { ?s ?p ?o }')
+    assertEquals(bindings.length > 0, true)
+  })
+
 
   it('Select query results in bindings serialized', async () => {
     const bindings = await store.query<'s' | 'p' | 'o'>('SELECT * { ?s ?p ?o }', true)

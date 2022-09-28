@@ -1,21 +1,13 @@
-import { assertEquals } from '../deps.ts'
-import { Flatty } from '../Flatty.ts'
-import { it, describe } from '../deps.ts'
+import { assertEquals } from '../../deps.ts'
+import { Flatty } from '../../Flatty.ts'
+import { it, describe } from '../../deps.ts'
 
 describe('Middleware execute', () => {
   it('Inserts data', async () => {
-    const store = await new Flatty({
-      folder: false,
-      websocketsPort: false
-    })
+    const store = await new Flatty()
 
-    const countResponse = await store.query<'count'>(`
-      SELECT (count(?s) as ?count) {
-        ?s ?p ?O
-      }
-    `)
-
-    const count = parseInt(countResponse.results.bindings[0].count.value)
+    const [ countResponse ] = await store.query<'count'>(`SELECT (count(?s) as ?count) { ?s ?p ?O }`)
+    const count = parseInt(countResponse.count.value)
 
     await store.query(`
       PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -29,8 +21,8 @@ describe('Middleware execute', () => {
     }`)
 
     const response = await store.query('SELECT * { ?s ?p ?o }')
-    assertEquals(response.results.bindings.length > count, true)
-    await store.close()
+    assertEquals(response.length > count, true)
+    await store.stop()
   })
 
 })

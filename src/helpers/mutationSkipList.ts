@@ -1,1 +1,0 @@
-export const mutationSkipList: Set<string> = new Set()

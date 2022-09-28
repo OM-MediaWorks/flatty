@@ -1,9 +1,13 @@
-import { Options, selectQuery, describeQuery, BindingsResponse, DefaultBindings, QueryContext, Engine, insertQuery, Middleware } from './types.ts'
+import { Options, selectQuery, describeQuery, BindingsResponse, DefaultBindings, QueryContext, Engine, insertQuery, Middleware, Binding } from './types.ts'
 import { Quad, Store } from './deps.ts'
-import { Execute } from './middlewares/execute.ts'
 import { SerializedN3Store } from './serialized-store/SerializedN3Store.ts'
 import { SparqlParser } from './deps.ts'
 import { QueryEngine } from './vendor/comunica-browser.js'
+
+// Default Middlewares
+import { Execute } from './middlewares/Execute/Execute.ts'
+import { Events } from './middlewares/Events/Events.ts'
+import { Prefixes } from './middlewares/Prefixes/Prefixes.ts'
 
 export class Flatty extends EventTarget {
 
@@ -12,28 +16,35 @@ export class Flatty extends EventTarget {
   #engine: Engine
   #store: Store
 
-  constructor (options: Options) {
+  constructor (options?: Options) {
     super()
 
-    this.#options = options
+    this.#options = options ?? {}
     this.#engine = new QueryEngine()
     this.#store = this.#options.store ?? new SerializedN3Store()
     
     this.#middlewares = { 
       // ...options.middlewares, 
-      execute: new Execute()
+      events: new Events(),
+      prefixes: new Prefixes(),
+      execute: new Execute(),
     }
 
     // To start Flatty you have to resolve the Promise it gives from the constructor:
     // const db = await new Flatty({ ... })
 
     /** @ts-ignore */
-    return Promise.all(Object.values(this.#middlewares).map(middleware => {
-      return middleware.init ? middleware.init() : Promise.resolve()
-    })).then(() => this)
+    return this.init().then(() => this)
+  }
+
+  async init () {
+    for (const middleware of Object.values(this.#middlewares)) {
+      if (middleware.init) 
+        await middleware.init(this) 
+    }
   }
  
-  async close () {
+  async stop () {
     for (const middleware of Object.values(this.#middlewares)) {
       if (middleware.stop) 
         await middleware.stop() 
@@ -41,13 +52,15 @@ export class Flatty extends EventTarget {
   }
 
   async query (query: insertQuery): Promise<void>;
-  async query (query: describeQuery, serialize: boolean): Promise<string>;
-  async query (query: selectQuery, serialize: boolean): Promise<string>;
+  async query (query: selectQuery, serialize: true, simplify?: boolean): Promise<string>;
+  async query <GivenBindings extends string = DefaultBindings>(query: selectQuery, serialize: true, simplify?: boolean): Promise<string>;
+  async query (query: describeQuery, serialize: true): Promise<string>;
 
-  async query (query: describeQuery, serialize?: boolean): Promise<Array<Quad>>;
-  async query <Bindings extends string = DefaultBindings>(query: selectQuery, serialize?: boolean): Promise<BindingsResponse<Bindings>>;
-
-  query (query: describeQuery | selectQuery | insertQuery, serialize = false) {
+  async query (query: describeQuery, serialize?: false): Promise<Array<Quad>>;
+  async query <GivenBindings extends string = DefaultBindings>(query: selectQuery, serialize?: false, simplify?: true): Promise<Array<Binding<GivenBindings>>>;
+  async query <GivenBindings extends string = DefaultBindings>(query: selectQuery, serialize?: false, simplify?: false): Promise<BindingsResponse<GivenBindings>>;
+ 
+  query (query: describeQuery | selectQuery | insertQuery, serialize = false, simplify = true) {
     const parser = new SparqlParser()
     const context: QueryContext = { 
       query, 
@@ -55,6 +68,7 @@ export class Flatty extends EventTarget {
       engine: this.#engine, 
       eventTarget: this, 
       serialize,
+      simplify,
       parsedQuery: parser.parse(query)
     }
 

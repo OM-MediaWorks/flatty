@@ -1,11 +1,11 @@
-import { streamToString } from '../helpers/streamToString.ts'
-import { Middleware, QueryContext } from '../types.ts'
+import { streamToString } from '../../helpers/streamToString.ts'
+import { Middleware, QueryContext } from '../../types.ts'
 
 export class Execute implements Middleware {
 
   async execute(context: QueryContext, _next: Function) {
     const response = await context.engine.query(context.query, {
-      sources: [context.store],
+      sources: [typeof context.store === 'string' ? { type: 'sparql', value: context.store } : context.store],
       unionDefaultGraph: true
     })
     
@@ -23,7 +23,7 @@ export class Execute implements Middleware {
     else if (response.resultType === 'bindings') {
       const { data } = await context.engine.resultToString(response, 'application/sparql-results+json')
       const text = await streamToString(data)
-      context.results = context.serialize ? text : JSON.parse(text)
+      context.results = context.serialize ? text : context.simplify ? JSON.parse(text).results.bindings : JSON.parse(text)
     }
     else if (response.resultType === 'void') {
       await response.execute()
