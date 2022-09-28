@@ -1,0 +1,6 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+    
+INSERT DATA {
+  <http://example/book> dcterms:title "book" ;
+                        dcterms:author <http://example/author> .  
+}

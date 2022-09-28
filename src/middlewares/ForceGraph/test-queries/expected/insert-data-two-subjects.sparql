@@ -1,0 +1,9 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+    
+INSERT DATA {
+  GRAPH <http://example/author> { <http://example/author> dcterms:name "author". }
+  GRAPH <http://example/book> {
+    <http://example/book> dcterms:title "book".
+    <http://example/book> dcterms:author <http://example/author>.
+  }
+}

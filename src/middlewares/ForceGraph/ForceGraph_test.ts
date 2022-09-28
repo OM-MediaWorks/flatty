@@ -23,31 +23,14 @@ const testQueries = (query: string, expectedQuery: string) => {
   assertEquals(JSON.stringify(parsedQuery), JSON.stringify(parser.parse(expectedQuery)))
 }
 
-describe('Middleware events', () => {
-
-  it('rewrites an INSERT DATA query to always have a graph', () => {
-    const query = `
-    PREFIX dcterms: <http://purl.org/dc/terms/>
-    
-    INSERT DATA {
-      <http://example/author> dcterms:name "author" .
-      <http://example/book> dcterms:title "book" ;
-                            dcterms:author <http://example/author> .  
-    }`
-
-    const expectedQuery = `
-    PREFIX dcterms: <http://purl.org/dc/terms/>
-    
-    INSERT DATA {
-      GRAPH <http://example/author> { <http://example/author> dcterms:name "author". }
-      GRAPH <http://example/book> {
-        <http://example/book> dcterms:title "book".
-        <http://example/book> dcterms:author <http://example/author>.
-      }
-    }`
-
-    testQueries(query, expectedQuery)
-  })
-
+describe('Middleware events', async () => {
+  const filePrefix = './src/middlewares/ForceGraph/test-queries'
+  for await (const dirEntry of Deno.readDir(`${filePrefix}/given`)) {
+    const givenSparql = Deno.readTextFileSync(`${filePrefix}/given/${dirEntry.name}`)
+    const expectedSparql = Deno.readTextFileSync(`${filePrefix}/expected/${dirEntry.name}`)
+      it(`tests ${dirEntry.name}`, () => {
+        testQueries(givenSparql, expectedSparql)
+      })
+  }
 })
 
