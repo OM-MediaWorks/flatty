@@ -28,5 +28,26 @@ describe('Middleware events', () => {
     await store.query<'s' | 'p' | 'o'>(query)
   })
 
+  // The default middleware setup has Events and ForceGraph.
+  // There for we can test this combination.
+  // When ForceGraph is not enabled the graphs might not be available.
+  it ('exposes graphs via the event after an INSERT DATA', async () => {
+    const query = `
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    
+    INSERT DATA {
+      <http://example/book> dcterms:title "book" ;
+                            dcterms:author <http://example/author> .  
+    }
+    `
+
+    awaitEvent(store, 'after:query').then((event: any) => {
+      assertEquals(event.detail.graphs.size, 1)
+      assertEquals([...event.detail.graphs.values()][0], 'http://example/book')
+    })
+
+    await store.query(query)
+  })
+
 })
 

@@ -1,47 +1,49 @@
 import { Middleware, QueryContext } from '../../types.ts'
 import { walker } from '../../helpers/walker.ts'
 import { SparqlGenerator } from '../../deps.ts'
+import { allPrefixes } from '../../helpers/allPrefixes.ts'
+import { replaceInsertWithMultipleGraphInserts } from './replaceInsertWithMultipleGraphInserts.ts'
 
+/**
+ * This middleware makes sure insertion of data always happens into a named graph.
+ * TODO Try to make a test on the output and throw an error when there are quads with the default graph.
+ */
 export class ForceGraph implements Middleware {
+
   execute (context: QueryContext, next: Function) {
-
+    let madeChanges = false
     const { parsedQuery } = context
-    walker(parsedQuery, (key: string, value: any, parent: any) => {
+
+    walker(parsedQuery, (key: string, value: any, _parent: any) => {
       if (key === 'insert') {
-        for (const insertion of value) {
-          const subjects = new Set()
+        for (const insert of value) {
+          const namedSubjects: Set<string> = new Set()
 
-          if (insertion.type !== 'graph') {
-            const insertionIndex = value.indexOf(insertion)
-            value.splice(insertionIndex, 1)
-
-            for (const triples of insertion.triples) {
-              if (triples.subject.termType === 'NamedNode') {
-                subjects.add(triples.subject.value)
-              }
+          if (insert.type !== 'graph') {
+            // Named subjects.
+            for (const triples of insert.triples) if (triples.subject.termType === 'NamedNode') namedSubjects.add(triples.subject.value)
+            if (namedSubjects.size) {
+              for (const namedSubject of namedSubjects) context.graphs.add(namedSubject)
+              replaceInsertWithMultipleGraphInserts(value, insert, namedSubjects)
+              madeChanges = true
             }
+          }
 
-            for (const subject of subjects) {
-              const newInsertion = JSON.parse(JSON.stringify(insertion))
-              newInsertion.type = 'graph'
-
-              newInsertion.name = {
-                'termType': 'NamedNode',
-                'value': subject
-              }
-  
-              newInsertion.triples = insertion.triples.filter((triples: any) => triples.subject?.value === subject)
-              value.push(newInsertion)
-            } 
+          // This inserts the graph of GRAPH objects into the context.
+          if (insert.type === 'graph') {
+            for (const triples of insert.triples) if (triples.subject.termType === 'NamedNode') context.graphs.add(triples.subject.value)
           }
         }
       }
     })
 
-    const generator = new SparqlGenerator()
-    context.parsedQuery = parsedQuery
-    context.query = generator.stringify(parsedQuery)
+    if (madeChanges) {
+      const generator = new SparqlGenerator({ prefixes: allPrefixes })
+      context.parsedQuery = parsedQuery
+      context.query = generator.stringify(parsedQuery)  
+    }
 
     return next()
   }
+  
 } 

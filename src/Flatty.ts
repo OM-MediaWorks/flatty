@@ -1,5 +1,5 @@
 import { Options, selectQuery, describeQuery, BindingsResponse, DefaultBindings, QueryContext, Engine, insertQuery, Middleware, Binding } from './types.ts'
-import { Quad, Store } from './deps.ts'
+import { Quad, Store, JsonLdContextNormalized } from './deps.ts'
 import { SerializedN3Store } from './serialized-store/SerializedN3Store.ts'
 import { SparqlParser } from './deps.ts'
 import { QueryEngine } from './vendor/comunica-browser.js'
@@ -8,10 +8,11 @@ import { QueryEngine } from './vendor/comunica-browser.js'
 import { Execute } from './middlewares/Execute/Execute.ts'
 import { Events } from './middlewares/Events/Events.ts'
 import { Prefixes } from './middlewares/Prefixes/Prefixes.ts'
+import { ForceGraph } from './middlewares/ForceGraph/ForceGraph.ts'
 
 export class Flatty extends EventTarget {
 
-  #middlewares: { [key: string]: Middleware } = {}
+  middlewares: { [key: string]: Middleware } = {}
   #options: Options
   #engine: Engine
   #store: Store
@@ -23,11 +24,12 @@ export class Flatty extends EventTarget {
     this.#engine = new QueryEngine()
     this.#store = this.#options.store ?? new SerializedN3Store()
     
-    this.#middlewares = { 
-      // ...options.middlewares, 
-      events: new Events(),
-      prefixes: new Prefixes(),
-      execute: new Execute(),
+    this.middlewares = { 
+      Prefixes: new Prefixes(),
+      ForceGraph: new ForceGraph(),
+      Events: new Events(),
+      Execute: new Execute(),
+      ...this.#options.middlewares, 
     }
 
     // To start Flatty you have to resolve the Promise it gives from the constructor:
@@ -38,14 +40,14 @@ export class Flatty extends EventTarget {
   }
 
   async init () {
-    for (const middleware of Object.values(this.#middlewares)) {
+    for (const middleware of Object.values(this.middlewares)) {
       if (middleware.init) 
         await middleware.init(this) 
     }
   }
  
   async stop () {
-    for (const middleware of Object.values(this.#middlewares)) {
+    for (const middleware of Object.values(this.middlewares)) {
       if (middleware.stop) 
         await middleware.stop() 
     }
@@ -69,11 +71,13 @@ export class Flatty extends EventTarget {
       eventTarget: this, 
       serialize,
       simplify,
+      context: new JsonLdContextNormalized({}),
+      graphs: new Set(),
       parsedQuery: parser.parse(query)
     }
 
     let chain: any 
-    for (const middleware of Object.values(this.#middlewares).reverse()) {
+    for (const middleware of Object.values(this.middlewares).reverse()) {
       const previousPointer = chain
       chain = () => middleware.execute(context, previousPointer ? previousPointer : () => null)
     }

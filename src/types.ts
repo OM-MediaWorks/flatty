@@ -1,15 +1,16 @@
-import { Store } from './deps.ts'
+import { Store, JsonLdContextNormalized } from './deps.ts'
 import { Flatty } from './Flatty.ts'
 
 export type Options = {
   store?: Store,
   middlewares?: {
-    [key: string]: (context: QueryContext, next: any) => Promise<void>
+    [key: string]: Middleware
   }
 }
 
 export interface Middleware {
-  init? (flatty: Flatty): Promise<void> 
+  dependencies?: Array<Middleware>
+  init? (flatty: Flatty): Promise<void> | void
   stop? (): Promise<void> 
   execute (context: QueryContext, next: Function): any
 }
@@ -28,12 +29,14 @@ export type DefaultBindings = 's' | 'p' | 'o'
 
 export type QueryContext = {
   query: string,
+  graphs: Set<string>,
   store: Store,
   engine: Engine
   results?: any,
   eventTarget: EventTarget,
   serialize: boolean
-  parsedQuery: any
+  parsedQuery: any,
+  context: JsonLdContextNormalized
   simplify: boolean
 }
 

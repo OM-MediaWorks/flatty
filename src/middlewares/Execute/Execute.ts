@@ -3,7 +3,7 @@ import { Middleware, QueryContext } from '../../types.ts'
 
 export class Execute implements Middleware {
 
-  async execute(context: QueryContext, _next: Function) {
+  async execute(context: QueryContext, next: Function) {
     const response = await context.engine.query(context.query, {
       sources: [typeof context.store === 'string' ? { type: 'sparql', value: context.store } : context.store],
       unionDefaultGraph: true
@@ -33,6 +33,8 @@ export class Execute implements Middleware {
       }
     }
   
+    await next()
+
     return context.results
   }
   

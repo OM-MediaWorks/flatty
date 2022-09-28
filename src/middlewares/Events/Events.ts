@@ -12,15 +12,17 @@ export class Events implements Middleware {
       `before:query`,
       `before:query:${context.parsedQuery.queryType}`
     ]
+    
+    fire(beforeHooks, context.eventTarget, context)
+    const result = await next()
   
     const afterHooks = [
       `after:query`,
       `after:query:${context.parsedQuery.queryType}`
     ]
-  
-    fire(beforeHooks, context.eventTarget, context)
-    const result = await next()
+
     fire(afterHooks, context.eventTarget, context) 
+
     return result
   }
 } 
