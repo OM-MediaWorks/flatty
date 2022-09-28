@@ -1,5 +1,6 @@
-import { Store, Parser as TurtleParser } from '../deps.ts'
+import { Store, Parser as TurtleParser, NamedNode, Quad } from '../deps.ts'
 import { allPrefixes } from '../helpers/allPrefixes.ts'
+import { fileToGraphsMapping } from '../helpers/fileToGraphsMapping.ts'
 
 const turtleParser = new TurtleParser()
 
@@ -15,8 +16,20 @@ export const addTurtleFileToStore = async (store: Store, path: string) => {
         subjectsThatAreOnlySubject.push(subject)
     }
 
+    // TODO When given multiple documents, split them and create seperate graphs
+
+    let graph: string
+
     turtleParser.parse(fileContents, (error, quad, prefixes) => {
-      if (quad) store.addQuad(quad)
+      if (quad) {
+        if (!graph) {
+          graph = quad.subject.value
+          if (!fileToGraphsMapping.has(path)) fileToGraphsMapping.set(path, [])
+          const graphs = fileToGraphsMapping.get(path)
+          graphs.push(graph)
+        }
+        store.addQuad(new Quad(quad.subject, quad.predicate, quad.object, new NamedNode(graph)))
+      }
       if (prefixes) {
         Object.assign(allPrefixes, prefixes)
       }

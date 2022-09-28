@@ -15,21 +15,20 @@ export class Flatty extends EventTarget {
   middlewares: { [key: string]: Middleware } = {}
   #options: Options
   #engine: Engine
-  #store: Store
+  store: Store
 
   constructor (options?: Options) {
     super()
 
     this.#options = options ?? {}
     this.#engine = new QueryEngine()
-    this.#store = this.#options.store ?? new SerializedN3Store()
+    this.store = this.#options.store ?? new SerializedN3Store()
     
-    this.middlewares = { 
+    this.middlewares = this.#options.middlewares ?? { 
       Prefixes: new Prefixes(),
       ForceGraph: new ForceGraph(),
       Events: new Events(),
-      Execute: new Execute(),
-      ...this.#options.middlewares, 
+      Execute: new Execute()
     }
 
     // To start Flatty you have to resolve the Promise it gives from the constructor:
@@ -66,7 +65,7 @@ export class Flatty extends EventTarget {
     const parser = new SparqlParser()
     const context: QueryContext = { 
       query, 
-      store: this.#store, 
+      store: this.store, 
       engine: this.#engine, 
       eventTarget: this, 
       serialize,

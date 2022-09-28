@@ -1,10 +1,5 @@
 import { Middleware, QueryContext } from '../../types.ts'
-
-const fire = (hooks: Array<string>, eventTarget: EventTarget, detail: any) => {
-  for (const hook of hooks) {
-    eventTarget.dispatchEvent(new CustomEvent(hook, { detail }))
-  }
-}
+import { fire } from '../../helpers/fire.ts'
 
 export class Events implements Middleware {
   async execute (context: QueryContext, next: Function) {

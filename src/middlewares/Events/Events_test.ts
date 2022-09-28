@@ -2,12 +2,15 @@ import { assertEquals } from '../../deps.ts'
 import { Flatty } from '../../Flatty.ts'
 import { beforeAll, afterAll, it, describe } from '../../deps.ts'
 import { awaitEvent } from '../../helpers/awaitEvent.ts'
+import { testMiddlewares } from '../testMiddlewares.ts'
 
 describe('Middleware events', () => {
   let store: Flatty
 
   beforeAll(async () => {
-    store = await new Flatty()
+    store = await new Flatty({
+      middlewares: testMiddlewares
+    })
   })
 
   afterAll(async () => {

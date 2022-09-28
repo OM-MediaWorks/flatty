@@ -1,10 +1,13 @@
 import { assertEquals } from '../../deps.ts'
 import { Flatty } from '../../Flatty.ts'
 import { it, describe } from '../../deps.ts'
+import { testMiddlewares } from '../testMiddlewares.ts'
 
 describe('Middleware execute', () => {
   it('Inserts data', async () => {
-    const store = await new Flatty()
+    const store = await new Flatty({
+      middlewares: testMiddlewares
+    })
 
     const [ countResponse ] = await store.query<'count'>(`SELECT (count(?s) as ?count) { ?s ?p ?O }`)
     const count = parseInt(countResponse.count.value)

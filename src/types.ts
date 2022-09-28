@@ -11,7 +11,7 @@ export type Options = {
 export interface Middleware {
   dependencies?: Array<Middleware>
   init? (flatty: Flatty): Promise<void> | void
-  stop? (): Promise<void> 
+  stop? (): Promise<void> | void
   execute (context: QueryContext, next: Function): any
 }
 

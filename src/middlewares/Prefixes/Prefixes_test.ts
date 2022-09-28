@@ -3,6 +3,7 @@ import { Store, NamedNode, Literal, Quad } from '../../deps.ts'
 import { Flatty } from '../../Flatty.ts'
 import { beforeAll, afterAll, it, describe } from '../../deps.ts'
 import { allPrefixes } from '../../helpers/allPrefixes.ts'
+import { testMiddlewares } from '../testMiddlewares.ts'
 
 describe('Middleware prefixes', () => {
   let store: Flatty
@@ -15,7 +16,8 @@ describe('Middleware prefixes', () => {
     ])
 
     store = await new Flatty({
-      store: n3Store
+      store: n3Store,
+      middlewares: testMiddlewares
     })
   })
 

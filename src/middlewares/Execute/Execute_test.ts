@@ -2,6 +2,7 @@ import { assertEquals } from '../../deps.ts'
 import { Store, NamedNode, Literal, Quad } from '../../deps.ts'
 import { Flatty } from '../../Flatty.ts'
 import { beforeAll, afterAll, it, describe } from '../../deps.ts'
+import { testMiddlewares } from '../testMiddlewares.ts'
 
 describe('Middleware execute', () => {
   let store: Flatty
@@ -13,7 +14,8 @@ describe('Middleware execute', () => {
     ])
 
     store = await new Flatty({
-      store: n3Store
+      store: n3Store,
+      middlewares: testMiddlewares  
     })
   })
 
