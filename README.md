@@ -1,6 +1,6 @@
-# Flatty, a flat file triple store
+# Flatty
 
-Flatty is a wrapper around a triple store. 
+Flatty is a wrapper around a triple store. It is built for Deno.
 
 It provides the following features:
 
