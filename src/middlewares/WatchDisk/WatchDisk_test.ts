@@ -40,15 +40,15 @@ describe('Middleware WatchDisk', () => {
     .replace('foaf:givenName   "Daniel"', 'foaf:givenName   "John"') 
     await Deno.writeTextFile(testFilePath, john)
 
-    awaitEvent(store, 'file:insert').then(async (event: any) => {
+    await awaitEvent(store, 'file:insert').then(async (event: any) => {
       const [ nameBindings ] = await store.query<'name'>(`
         PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
         SELECT ?name { <https://danielbeeke.nl/#me> foaf:givenName ?name }
       `)
       assertEquals(nameBindings.name.value, 'John')
-    })
 
-    await Deno.writeTextFile(testFilePath, daniel)
+      await Deno.writeTextFile(testFilePath, daniel)
+    })
   })
 
 })
