@@ -1,6 +1,6 @@
 import { assertEquals } from '../deps.ts'
 import { Store, NamedNode, Literal, Quad } from '../deps.ts'
-import { Flatty } from '../mod.ts'
+import { Flatty } from '../Flatty.ts'
 import { beforeAll, afterAll, it, describe } from '../deps.ts'
 
 describe('Middleware execute', () => {

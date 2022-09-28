@@ -1,11 +1,11 @@
 import { assertEquals } from '../deps.ts'
-import { Flatty } from '../mod.ts'
+import { Flatty } from '../Flatty.ts'
 import { it, describe } from '../deps.ts'
 
 describe('Middleware execute', () => {
   it('Inserts data', async () => {
     const store = await new Flatty({
-      folder: false,
+      folder: './test-data',
       websocketsPort: false
     })
 
@@ -17,15 +17,25 @@ describe('Middleware execute', () => {
 
     const count = parseInt(countResponse.results.bindings[0].count.value)
 
+    // await store.query(`
+    //   PREFIX dcterms: <http://purl.org/dc/terms/>
+      
+    //   INSERT DATA {
+    //       GRAPH <http://example/shelf_A> {
+    //           <http://example/author> dcterms:name "author" .
+    //           <http://example/book> dcterms:title "book" ;
+    //                                 dcterms:author <http://example/author> .  
+    //       } 
+    // }`)
+
+
     await store.query(`
       PREFIX dcterms: <http://purl.org/dc/terms/>
       
       INSERT DATA {
-          GRAPH <http://example/shelf_A> {
-              <http://example/author> dcterms:name "author" .
-              <http://example/book> dcterms:title "book" ;
-                                    dcterms:author <http://example/author> .  
-          } 
+          <http://example/author> dcterms:name "author" .
+          <http://example/book> dcterms:title "book" ;
+                                dcterms:author <http://example/author> .  
     }`)
 
     const response = await store.query('SELECT * { ?s ?p ?o }')

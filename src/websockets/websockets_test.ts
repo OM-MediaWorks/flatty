@@ -1,5 +1,5 @@
 import { assertEquals, assertExists } from '../deps.ts'
-import { Flatty } from '../mod.ts'
+import { Flatty } from '../Flatty.ts'
 import { it, describe } from '../deps.ts'
 import { awaitEvent } from '../helpers/awaitEvent.ts'
 

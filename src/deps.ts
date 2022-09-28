@@ -7,4 +7,4 @@ export { beforeAll, afterAll, it, describe } from 'https://deno.land/std@0.152.0
 export * as RDF from 'https://esm.sh/v93/@types/rdf-js@4.0.2/rdf-js.d.ts'
 export { serve } from 'https://deno.land/std@0.152.0/http/server.ts'
 export { debounce } from 'https://deno.land/std@0.152.0/async/debounce.ts'
-export { Parser as SparqlParser } from 'https://esm.sh/sparqljs@3.5.2'
+export { Parser as SparqlParser, Generator as SparqlGenerator } from 'https://esm.sh/sparqljs@3.5.2'

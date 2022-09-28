@@ -28,6 +28,8 @@ export type QueryContext = {
   eventTarget: EventTarget,
   serialize: boolean
   parsedQuery: any
+  base: string,
+  folder?: string
 }
 
 export type Engine = {
