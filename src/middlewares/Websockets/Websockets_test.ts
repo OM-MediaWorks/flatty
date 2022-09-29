@@ -1,6 +1,6 @@
 import { assertEquals, assertExists } from '../../deps.ts'
 import { Flatty } from '../../Flatty.ts'
-import { beforeAll, afterAll, it, describe } from '../../deps.ts'
+import { it, describe } from '../../deps.ts'
 import { Websockets } from './Websockets.ts'
 import { testMiddlewares } from '../testMiddlewares.ts'
 import { awaitEvent } from '../../helpers/awaitEvent.ts'
@@ -19,7 +19,7 @@ describe('Middleware Websockets', () => {
     await awaitEvent(store, 'websocket:opened')
 
     const wsServer = store.middlewares.Websockets as Websockets
-    wsServer.reloadSockets({
+    wsServer.message({
       message: 'woopwoop'
     })
 

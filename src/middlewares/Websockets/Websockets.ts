@@ -24,7 +24,10 @@ export class Websockets implements Middleware {
     this.#servePromise = this.startServer()
 
     this.#debouncer = debounce((event) => {
-      this.reloadSockets(event.detail)
+      this.message({
+        command: 'reload',
+        event: event.detail
+      })
     }, 100)
   
     this.#flatty.addEventListener('file', this.#debouncer)
@@ -47,7 +50,7 @@ export class Websockets implements Middleware {
     })
   }
 
-  reloadSockets (meta: any) {
+  message (meta: any) {
     for (const socket of this.#sockets) {
       if (socket.readyState === socket.OPEN) {
         socket.send(JSON.stringify(meta))
