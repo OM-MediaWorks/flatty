@@ -33,7 +33,6 @@ describe('Middleware execute', () => {
     assertEquals(bindings.length > 0, true)
   })
 
-
   it('Select query results in bindings serialized', async () => {
     const bindings = await store.query<'s' | 'p' | 'o'>('SELECT * { ?s ?p ?o }', true)
     assertEquals(typeof bindings, 'string')

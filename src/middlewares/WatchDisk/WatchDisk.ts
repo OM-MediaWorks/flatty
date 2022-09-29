@@ -1,6 +1,6 @@
 import { Flatty } from '../../Flatty.ts'
 import { Middleware, QueryContext } from '../../types.ts'
-import { expandGlob, ensureDir, Store, normalize } from '../../deps.ts'
+import { Store, normalize } from '../../deps.ts'
 import { addTurtleFileToStore } from '../../helpers/addTurtleFileToStore.ts'
 import { deleteGraphFromStore } from '../../helpers/deleteGraphFromStore.ts'
 import { fileToGraphsMapping } from '../../helpers/fileToGraphsMapping.ts'
@@ -13,7 +13,7 @@ export class WatchDisk implements Middleware {
 
   constructor (folder: string) {
     this.#folder = folder
-    this.#watcher = Deno.watchFs(normalize(folder))
+    this.#watcher = Deno.watchFs(normalize(this.#folder))
   }
 
   init (flatty: Flatty) {
