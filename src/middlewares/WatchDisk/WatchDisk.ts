@@ -25,14 +25,14 @@ export class WatchDisk implements Middleware {
 
           if (['modify'].includes(event.kind)) {
             await addTurtleFileToStore(flatty.store, path)
-            fire(['file:insert'], flatty, { path })
+            fire(['file', 'file:insert'], flatty, { path })
           }
     
           if (['remove'].includes(event.kind)) {
             const graphs = fileToGraphsMapping.get(path)
             for (const graph of graphs) {
               deleteGraphFromStore(flatty.store, graph)
-              fire(['file:remove'], flatty, { path })
+              fire(['file', 'file:remove'], flatty, { path })
             }
           }
         }
