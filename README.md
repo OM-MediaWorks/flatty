@@ -4,23 +4,28 @@ Flatty is a wrapper around a triple store. It is built for Deno.
 
 It provides the following features:
 
-- Flatty provides addEventListener, the following events are available:
-  - file
-  - file:insert
-  - file:remove
-  - before:query:SELECT
-  - after:query:SELECT
-  - before:query:INSERT
-  - after:query:INSERT
-  - websocket:opened
-  - websocket:closed
-- Middlewares: Change queries, results or start processes
+- You can use an N3 Store or a URL to a SPARQL Endpoint.
+- Middlewares: 
+  - EnforceShacl, enforce shacl shapes on INSERT DATA queries
+  - Events, dispatches events on Flatty
+    - file
+    - file:insert
+    - file:remove
+    - before:query:SELECT
+    - after:query:SELECT
+    - before:query:INSERT
+    - after:query:INSERT
+    - websocket:opened
+    - websocket:closed
+  - Execute, Executes the query and nicely formats it
+  - ForceGraph, When inserting data enforces a named graph
+  - LoadGraphs, Loads turtle files from disk when Flatty starts
+  - Prefixes, Loads prefixes
+  - Subscribe, Subscribe to queries and get notified when the contents change
+  - WatchDisk, Watch the disk for changes and apply them to the in memory N3 store
+  - Websockets, Subscribe to events from the browser
+  - WriteGraphs, When data is updated write back to the disk in turtle format  
 - query() method from Comunica with TypeScript typings
-- You can give a N3 Store or a URL to a SPARQL Endpoint.
-- N3Store that can be started with cache
-- File sync: edit turtle on disk and see that reflected in the in-memory store
-- Sparql updates to disk as turtle files
-- WebSockets PubSub: Subscribe to query result changes
 
 TODO:
 
