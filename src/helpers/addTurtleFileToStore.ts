@@ -1,6 +1,7 @@
 import { Store, Parser as TurtleParser, NamedNode, Quad } from '../deps.ts'
 import { allPrefixes } from '../helpers/allPrefixes.ts'
 import { fileToGraphsMapping } from '../helpers/fileToGraphsMapping.ts'
+import { deleteGraphFromStore } from '../helpers/deleteGraphFromStore.ts'
 
 const turtleParser = new TurtleParser()
 
@@ -27,6 +28,7 @@ export const addTurtleFileToStore = async (store: Store, path: string) => {
           if (!fileToGraphsMapping.has(path)) fileToGraphsMapping.set(path, [])
           const graphs = fileToGraphsMapping.get(path)
           graphs.push(graph)
+          deleteGraphFromStore(store, graph)
         }
         store.addQuad(new Quad(quad.subject, quad.predicate, quad.object, new NamedNode(graph)))
       }

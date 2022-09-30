@@ -2,6 +2,9 @@ import { Store, JsonLdContextNormalized } from './deps.ts'
 import { Flatty } from './Flatty.ts'
 
 export type Options = {
+  websocketsPort?: number,
+  folder?: string,
+  typeMapping?: { [key: string]: string },
   store?: Store,
   middlewares?: {
     [key: string]: Middleware
@@ -18,6 +21,7 @@ export interface Middleware {
 export type selectQuery = `${string}SELECT${string}`;
 export type describeQuery = `${string}DESCRIBE${string}`;
 export type insertQuery = `${string}INSERT DATA${string}`;
+export type constructQuery = `${string}CONSTRUCT${string}`;
 
 export type TermValue = {
   value: string,
@@ -34,7 +38,7 @@ export type QueryContext = {
   engine: Engine
   results?: any,
   eventTarget: EventTarget,
-  serialize: boolean
+  serialize: boolean | string
   parsedQuery: any,
   context: JsonLdContextNormalized
   simplify: boolean

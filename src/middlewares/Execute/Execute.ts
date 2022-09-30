@@ -13,7 +13,7 @@ export class Execute implements Middleware {
       const quadStream = await response.execute()
   
       if (context.serialize) {
-        const { data } = await context.engine.resultToString(response, 'application/n-quads')
+        const { data } = await context.engine.resultToString(response, typeof context.serialize === 'string' ? context.serialize : 'application/n-quads')
         context.results = await streamToString(data)
       }
       else {
