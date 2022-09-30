@@ -3,9 +3,11 @@ import { fire } from '../../helpers/fire.ts'
 
 export class Events implements Middleware {
   async execute (context: QueryContext, next: Function) {
+    const type = context.parsedQuery.queryType ?? context.parsedQuery.type
+
     const beforeHooks = [
       `before:query`,
-      `before:query:${context.parsedQuery.queryType}`
+      `before:query:${type}`
     ]
     
     fire(beforeHooks, context.eventTarget, context)
@@ -13,9 +15,9 @@ export class Events implements Middleware {
   
     const afterHooks = [
       `after:query`,
-      `after:query:${context.parsedQuery.queryType}`
+      `after:query:${type}`
     ]
-
+    
     fire(afterHooks, context.eventTarget, context) 
 
     return result

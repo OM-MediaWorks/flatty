@@ -4,6 +4,7 @@ import { SerializedN3Store } from './serialized-store/SerializedN3Store.ts'
 import { SparqlParser } from './deps.ts'
 import { QueryEngine } from './vendor/comunica-browser.js'
 import { createMiddlewares } from './helpers/createMiddlewares.ts'
+import { Subscribe } from './middlewares/Subscribe/Subscribe.ts'
 
 export class Flatty extends EventTarget {
 
@@ -80,5 +81,14 @@ export class Flatty extends EventTarget {
     }
 
     return chain()
+  }
+
+  subscribe(query: string, callback: () => void) {
+    if (this.middlewares.Subscribe) {
+      return (this.middlewares.Subscribe as Subscribe).subscribe(query, callback)
+    }
+    else {
+      throw new Error('Missing Subscribe middleware')
+    }
   }
 }

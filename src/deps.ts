@@ -9,3 +9,4 @@ export { serve } from 'https://deno.land/std@0.152.0/http/server.ts'
 export { debounce } from 'https://deno.land/std@0.152.0/async/debounce.ts'
 export { Parser as SparqlParser, Generator as SparqlGenerator } from 'https://esm.sh/sparqljs@3.5.2'
 export { JsonLdContextNormalized } from 'https://esm.sh/jsonld-context-parser@2.2.1'
+export { Sha512 } from "https://deno.land/std/hash/sha512.ts"
