@@ -28,7 +28,7 @@ describe('Middleware Subscribe', () => {
 
     const query = 'SELECT * { ?s ?p ?o }'
 
-    const eventPromise = awaitEvent(socket, 'message')
+    const eventPromise = awaitEvent(socket, 'message', (event) => event.data.includes('subscriptionChanged'))
     socket.send(JSON.stringify({ subscribe: query }))
 
     await awaitEvent(store, 'subscribed')

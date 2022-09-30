@@ -7,7 +7,11 @@ export class Events implements Middleware {
 
   #flatty: Flatty
 
-  constructor (flatty: Flatty) {
+  constructor () {
+    this.#flatty = null!
+  }
+
+  init (flatty: Flatty) {
     this.#flatty = flatty
   }
 
