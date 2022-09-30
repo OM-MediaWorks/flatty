@@ -1,4 +1,4 @@
-import { Store, Parser as TurtleParser, NamedNode, Quad } from '../deps.ts'
+import { Store, Parser as TurtleParser, NamedNode, Quad, exists } from '../deps.ts'
 import { allPrefixes } from '../helpers/allPrefixes.ts'
 import { fileToGraphsMapping } from '../helpers/fileToGraphsMapping.ts'
 import { deleteGraphFromStore } from '../helpers/deleteGraphFromStore.ts'
@@ -6,6 +6,8 @@ import { deleteGraphFromStore } from '../helpers/deleteGraphFromStore.ts'
 const turtleParser = new TurtleParser()
 
 export const addTurtleFileToStore = async (store: Store, path: string) => {
+  if (!(await exists(path))) return
+  
   const fileContents = await Deno.readTextFile(path)
 
   try {
@@ -36,6 +38,8 @@ export const addTurtleFileToStore = async (store: Store, path: string) => {
         Object.assign(allPrefixes, prefixes)
       }
     })
+
+    return true
   }
   catch (exception) {
     console.error(exception)

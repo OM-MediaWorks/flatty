@@ -4,6 +4,9 @@ import { Flatty } from '../../Flatty.ts'
 import { Sha512 } from '../../deps.ts'
 import { fire } from '../../helpers/fire.ts'
 
+/**
+ * TODO this needs to be improved so it only refreshes when the specific graphs of the query have been changed.
+ */
 export class Subscribe implements Middleware {
 
   #flatty: Flatty

@@ -1,7 +1,8 @@
 import { Flatty } from '../../Flatty.ts'
 import { Middleware, QueryContext } from '../../types.ts'
 import { streamToString } from '../../helpers/streamToString.ts'
-import { normalize, ensureDirSync } from '../../deps.ts'
+import { normalize, ensureDir } from '../../deps.ts'
+import { mutationSkipList } from '../../helpers/mutationSkipList.ts'
 
 export class WriteGraphs implements Middleware {
 
@@ -34,8 +35,10 @@ export class WriteGraphs implements Middleware {
       const cleanGraph = compactedGraph.replaceAll(/\//g, '')
       const dir = normalize(`${Deno.cwd()}/${this.#folder}/${this.#mapping[type] ?? this.#mapping['default'] ?? ''}/`)
       const filePath = normalize(`${dir}/${cleanGraph}.ttl`)
-      ensureDirSync(dir)
-      Deno.writeTextFileSync(filePath, turtle)
+      await ensureDir(dir)
+      mutationSkipList.add(filePath)
+      await Deno.writeTextFile(filePath, turtle)
+      mutationSkipList.delete(filePath)
     }
 
     return next()

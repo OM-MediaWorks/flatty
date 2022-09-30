@@ -5,6 +5,7 @@ import { addTurtleFileToStore } from '../../helpers/addTurtleFileToStore.ts'
 import { deleteGraphFromStore } from '../../helpers/deleteGraphFromStore.ts'
 import { fileToGraphsMapping } from '../../helpers/fileToGraphsMapping.ts'
 import { fire } from '../../helpers/fire.ts'
+import { mutationSkipList } from '../../helpers/mutationSkipList.ts'
 
 export class WatchDisk implements Middleware {
 
@@ -24,15 +25,19 @@ export class WatchDisk implements Middleware {
         for (const path of event.paths) {
 
           if (['modify'].includes(event.kind)) {
-            await addTurtleFileToStore(flatty.store, path)
-            fire(['file', 'file:insert'], flatty, { path })
+            if (!mutationSkipList.has(path)) {
+              if (await addTurtleFileToStore(flatty.store, path))
+                fire(['file', 'file:insert'], flatty, { path })  
+            }
           }
     
           if (['remove'].includes(event.kind)) {
             const graphs = fileToGraphsMapping.get(path)
             for (const graph of graphs) {
-              deleteGraphFromStore(flatty.store, graph)
-              fire(['file', 'file:remove'], flatty, { path })
+              if (!mutationSkipList.has(path)) {
+                deleteGraphFromStore(flatty.store, graph)
+                fire(['file', 'file:remove'], flatty, { path })  
+              }
             }
           }
         }

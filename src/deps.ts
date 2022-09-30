@@ -1,7 +1,7 @@
 export { Store, Quad, Parser, DataFactory, Writer, NamedNode, Literal } from 'https://esm.sh/n3@1.16.2'
-export type { StoreOptions, Term } from 'https://esm.sh/n3@1.16.2'
+export type { StoreOptions, Term, Prefixes } from 'https://esm.sh/n3@1.16.2'
 export { normalize, dirname, fromFileUrl } from 'https://deno.land/std@0.152.0/path/mod.ts'
-export { ensureDir, expandGlob, ensureDirSync } from 'https://deno.land/std@0.152.0/fs/mod.ts'
+export { ensureDir, expandGlob, ensureDirSync, exists } from 'https://deno.land/std@0.152.0/fs/mod.ts'
 export { assertEquals, assertExists } from 'https://deno.land/std@0.152.0/testing/asserts.ts'
 export { beforeAll, afterAll, it, describe } from 'https://deno.land/std@0.152.0/testing/bdd.ts'
 export * as RDF from 'https://esm.sh/v93/@types/rdf-js@4.0.2/rdf-js.d.ts'
@@ -10,3 +10,6 @@ export { debounce } from 'https://deno.land/std@0.152.0/async/debounce.ts'
 export { Parser as SparqlParser, Generator as SparqlGenerator } from 'https://esm.sh/sparqljs@3.5.2'
 export { JsonLdContextNormalized } from 'https://esm.sh/jsonld-context-parser@2.2.1'
 export { Sha512 } from "https://deno.land/std/hash/sha512.ts"
+export { QueryEngine } from './vendor/comunica-browser.js'
+import SHACLValidator from 'https://esm.sh/rdf-validate-shacl'
+export { SHACLValidator }

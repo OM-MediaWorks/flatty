@@ -2,7 +2,7 @@ import { Options, selectQuery, describeQuery, constructQuery, BindingsResponse, 
 import { Quad, Store, JsonLdContextNormalized } from './deps.ts'
 import { SerializedN3Store } from './serialized-store/SerializedN3Store.ts'
 import { SparqlParser } from './deps.ts'
-import { QueryEngine } from './vendor/comunica-browser.js'
+import { QueryEngine } from './deps.ts'
 import { createMiddlewares } from './helpers/createMiddlewares.ts'
 import { Subscribe } from './middlewares/Subscribe/Subscribe.ts'
 
@@ -53,6 +53,7 @@ export class Flatty extends EventTarget {
   async query <GivenBindings extends string = DefaultBindings>(query: selectQuery, serialize: true, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<string>;
   async query (query: describeQuery, serialize: true, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<string>;
   async query (query: constructQuery, serialize: true | string, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<string>;
+  async query (query: constructQuery): Promise<Array<Quad>>;
 
   
   async query (query: describeQuery, serialize?: false, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<Array<Quad>>;
