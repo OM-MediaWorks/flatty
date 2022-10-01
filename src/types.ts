@@ -59,3 +59,5 @@ export type BindingsResponse<GivenBindings extends string> = {
     bindings: Array<Binding<GivenBindings>>
   }
 }
+
+export type query = describeQuery | selectQuery | insertQuery | constructQuery

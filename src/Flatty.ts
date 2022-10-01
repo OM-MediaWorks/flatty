@@ -1,4 +1,4 @@
-import { Options, selectQuery, describeQuery, constructQuery, BindingsResponse, DefaultBindings, QueryContext, Engine, insertQuery, Middleware, Binding } from './types.ts'
+import { Options, query, selectQuery, describeQuery, constructQuery, BindingsResponse, DefaultBindings, QueryContext, Engine, insertQuery, Middleware, Binding } from './types.ts'
 import { Quad, Store, JsonLdContextNormalized } from './deps.ts'
 import { SerializedN3Store } from './serialized-store/SerializedN3Store.ts'
 import { SparqlParser } from './deps.ts'
@@ -25,7 +25,8 @@ export class Flatty extends EventTarget {
     if (!this.#options.middlewares && (!this.#options.folder || !this.#options.typeMapping)) 
       throw new Error('A folder and typeMapping or middlewares are required.')
 
-    this.middlewares = this.#options.middlewares ?? createMiddlewares(this.#options.folder!, this.#options.typeMapping!, this.#options.websocketsPort)
+    this.middlewares = this.#options.middlewares ?? 
+      createMiddlewares(this.#options.folder!, this.#options.typeMapping!, this.#options.websocketsPort)
 
     // To start Flatty you have to resolve the Promise it gives from the constructor:
     // const db = await new Flatty({ ... })
@@ -50,17 +51,19 @@ export class Flatty extends EventTarget {
 
   async query (query: insertQuery): Promise<void>;
   async query (query: selectQuery, serialize: true, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<string>;
-  async query <GivenBindings extends string = DefaultBindings>(query: selectQuery, serialize: true, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<string>;
-  async query (query: describeQuery, serialize: true, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<string>;
   async query (query: constructQuery, serialize: true | string, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<string>;
   async query (query: constructQuery): Promise<Array<Quad>>;
-
-  
   async query (query: describeQuery, serialize?: false, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<Array<Quad>>;
-  async query <GivenBindings extends string = DefaultBindings>(query: selectQuery, serialize?: false, simplify?: true, additionalContext?: { [key: string]: any }): Promise<Array<Binding<GivenBindings>>>;
-  async query <GivenBindings extends string = DefaultBindings>(query: selectQuery, serialize?: false, simplify?: false, additionalContext?: { [key: string]: any }): Promise<BindingsResponse<GivenBindings>>;
+  async query (query: describeQuery, serialize: true, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<string>;
+
+  async query <GivenBindings extends string = DefaultBindings>
+    (query: selectQuery, serialize: true, simplify?: boolean, additionalContext?: { [key: string]: any }): Promise<string>;
+  async query <GivenBindings extends string = DefaultBindings>
+    (query: selectQuery, serialize?: false, simplify?: true, additionalContext?: { [key: string]: any }): Promise<Array<Binding<GivenBindings>>>;
+  async query <GivenBindings extends string = DefaultBindings>
+    (query: selectQuery, serialize?: false, simplify?: false, additionalContext?: { [key: string]: any }): Promise<BindingsResponse<GivenBindings>>;
  
-  query (query: describeQuery | selectQuery | insertQuery | constructQuery, serialize: boolean | string = false, simplify = true, additionalContext: { [key: string]: any } = {}) {
+  query (query: query, serialize: boolean | string = false, simplify = true, additionalContext: { [key: string]: any } = {}) {
     const parser = new SparqlParser()
     const context: QueryContext = { 
       query, 
