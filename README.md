@@ -31,6 +31,10 @@ It provides the following features:
   - __WriteGraphs__, When data is updated write back to the disk in turtle format  
   - Or write your own...
 
+## Architecture
+
+![architecture](https://github.com/danielbeeke/flatty/blob/master/architecture/overview.svg?raw=true)
+
 ## Usage
 
 ```TypeScript
