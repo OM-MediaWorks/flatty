@@ -21,7 +21,7 @@ It provides the following features:
   - __EnforceShacl__, enforce SHACL shapes on INSERT DATA queries. You provide a callback which returns the SHACL shape as an N3 store.
   - __Events__, dispatches events on Flatty
     - file, file:insert, file:remove, before:query:SELECT, after:query:SELECT, before:query:INSERT, after:query:INSERT, websocket:opened, websocket:closed
-  - __Execute__, Executes the query and nicely outputs it with Typescript typings
+  - __Execute__, Executes the query and nicely outputs it with Typescript typings, it can gather multiple sources via a callback
   - __ForceGraph__, When inserting data enforces a named graph
   - __LoadGraphs__, Loads turtle files from disk when Flatty starts
   - __Prefixes__, Loads prefixes
@@ -39,7 +39,10 @@ const flatty = await new Flatty()
 
 const flatty = await new Flatty({
   source: 'https://dbpedia.com/sparql'
-  // Not very useful because most middlewares are about the functionality of writing and the interaction between reading and writing.
+  // Not very useful because most middlewares are about 
+  // the functionality of writing and 
+  // the interaction between reading and writing.
+  //
   // In this case you can just use Comunica directly.
 })
 
@@ -52,7 +55,8 @@ const flatty = await new Flatty({
 
 const flatty = await new Flatty({
   middlewares: createMiddlewares('./data', {
-    // This makes sure documents withs https://example.com/Person are saved into the ./data/people folder.
+    // This makes sure documents withs https://example.com/Person
+    // are saved into the ./data/people folder.
     'https://example.com/Person': 'people'
   })
 })
