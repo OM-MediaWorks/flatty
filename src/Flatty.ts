@@ -1,10 +1,23 @@
-import { Options, query, selectQuery, describeQuery, constructQuery, BindingsResponse, DefaultBindings, QueryContext, Engine, insertQuery, Middleware, Binding } from './types.ts'
 import { Quad, Store, JsonLdContextNormalized } from './deps.ts'
 import { SerializedN3Store } from './serialized-store/SerializedN3Store.ts'
 import { SparqlParser } from './deps.ts'
 import { QueryEngine } from './deps.ts'
 import { createMiddlewares } from './helpers/createMiddlewares.ts'
 import { Subscribe } from './middlewares/Subscribe/Subscribe.ts'
+import { 
+  Options, 
+  query, 
+  selectQuery, 
+  describeQuery, 
+  constructQuery, 
+  BindingsResponse, 
+  DefaultBindings, 
+  QueryContext, 
+  Engine, 
+  insertQuery, 
+  Middleware, 
+  Binding 
+} from './types.ts'
 
 export class Flatty extends EventTarget {
 
@@ -67,7 +80,7 @@ export class Flatty extends EventTarget {
     const parser = new SparqlParser()
     const context: QueryContext = { 
       query, 
-      store: this.store, 
+      source: this.store, 
       engine: this.#engine, 
       eventTarget: this, 
       serialize,

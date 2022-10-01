@@ -3,14 +3,14 @@ import { Middleware, QueryContext } from '../../types.ts'
 
 export class Execute implements Middleware {
 
-  #sourcesgatherer: (context: QueryContext) => Array<any>
+  #sourcesGatherer: (context: QueryContext) => Array<any>
 
-  constructor (sourcesgatherer?: (context: QueryContext) => Array<any>) {
-    this.#sourcesgatherer = sourcesgatherer ?? (() => [])
+  constructor (sourcesGatherer?: (context: QueryContext) => Array<any>) {
+    this.#sourcesGatherer = sourcesGatherer ?? (() => [])
   }
 
   async execute(context: QueryContext, next: Function) {
-    const sources = [typeof context.store === 'string' ? { type: 'sparql', value: context.store } : context.store, ...this.#sourcesgatherer(context)]
+    const sources = [typeof context.source === 'string' ? { type: 'sparql', value: context.source } : context.source, ...this.#sourcesGatherer(context)]
 
     const response = await context.engine.query(context.query, { sources, unionDefaultGraph: true })
     

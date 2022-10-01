@@ -11,7 +11,7 @@ const testQueries = (query: string, expectedQuery: string) => {
   const parsedQuery = parser.parse(query)
   const context: QueryContext = {
     query,
-    store: null!,
+    source: null!,
     engine: null!,
     eventTarget: null!,
     serialize: false,

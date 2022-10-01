@@ -3,7 +3,7 @@ import { Flatty } from '../../Flatty.ts'
 import { it, describe, beforeAll, afterAll } from '../../deps.ts'
 import { Execute } from './Execute.ts'
 
-describe('Middleware execute', () => {
+describe('Middleware execute multie sources', () => {
 
   let store: Flatty
 

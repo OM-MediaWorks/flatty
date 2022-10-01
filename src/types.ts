@@ -34,7 +34,7 @@ export type DefaultBindings = 's' | 'p' | 'o'
 export type QueryContext = {
   query: string,
   graphs: Set<string>,
-  store: Store,
+  source: Store,
   engine: Engine
   results?: any,
   eventTarget: EventTarget,

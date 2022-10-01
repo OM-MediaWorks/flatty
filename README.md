@@ -1,6 +1,6 @@
 # Flatty
 
-Flatty is a wrapper around a triple store. It is built for Deno.
+Flatty is a wrapper around a triple store. It is built for Deno and some middlewares will work in the browser.
 
 It provides the following features:
 

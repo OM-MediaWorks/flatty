@@ -19,7 +19,7 @@ export class WriteGraphs implements Middleware {
   }
 
   async execute (context: QueryContext, next: Function) {
-    const sources = [typeof context.store === 'string' ? { type: 'sparql', value: context.store } : context.store] 
+    const sources = [typeof context.source === 'string' ? { type: 'sparql', value: context.source } : context.source] 
 
     for (const graph of context.graphs) {
       const response = await context.engine.query(`CONSTRUCT { ?s ?p ?o } FROM <${graph}> WHERE { ?s ?p ?o }`, { sources })
